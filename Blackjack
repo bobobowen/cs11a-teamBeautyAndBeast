@@ -1,0 +1,128 @@
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
+
+/**
+* Backjack
+* 1.Shuffle Cards
+* 2.Deal Cards to the Player
+* 3.Calculate Player's Points
+* 4.Hit or Stand?
+* 5.Deal Cards to the Computer
+* 6.Result
+*/
+public class Blackjack{
+  private int[] cards = new int[52]; //52cards
+  private String[] suits= {"Spade","Heart","Club","Diamond"};
+  private String[] number = {"A","2","3","4","5","6","7","8","9","10","J","Q","K"};
+  private ArrayList<Integer> al = new ArrayList<Integer>();
+  private int currentPoint;
+  private int computerPoint = 0;
+  private int currentPage=0;
+
+
+  public Blackjack() {
+    super();
+    shuffle();// shuffle 52 cards
+    deal();//deal cards to the player
+    hitorstand();//Hit or Stand?
+    computer();//deal cards to computer
+    result(); //Calculate the results
+  }
+  private void shuffle() {
+    for(int i = 0; i < 52 ;i++ ){
+      cards[i]=i; //give value to the cards
+    }
+    for(int j = 0;j<30;j++){ //shuttle 30 times
+      Random r = new Random();
+      int i1 = Math.abs(r.nextInt()%52); //find the 1st card in the deck
+      int i2 =Math.abs(r.nextInt()%52);//find the 2nd
+
+      int temp = cards[i2];
+      cards[i2] = cards[i1];
+      cards[i1] = temp;
+    }
+  }
+
+
+
+
+  private void deal() {
+    /* for(int i = 0;i<52;i++){
+    System.out.print(cards[i]+"\t");
+  }*/
+
+  //deal 2 cards to the player
+  al.add(cards[0]);
+  al.add(cards[1]);
+  currentPoint += calPoint(cards[0]);
+  currentPoint+= calPoint(cards[1]);
+  currentPage= 2;
+}
+private int calPoint(int i) {//calculate the points
+  int temp = 0;
+  if(i%13+1>10){ //J, K, Q has value of 10
+    temp = 10;
+  }
+  else{
+    temp = (i+1)%13;
+  }
+  return temp;
+}
+
+
+
+
+private void hitorstand() {
+
+  while(true){
+    show(); //show the value to the player
+
+    if(currentPoint>=21){ //if total points>=21, no more cards
+      break;
+    }
+    System.out.println("Hit again?");
+    Scanner sc = new Scanner(System.in);
+    if(sc.next().equalsIgnoreCase("No")){
+      break; //type in No to stand
+    }else {
+      al.add(cards[currentPage]); //continue to deal
+      currentPoint+=calPoint(cards[currentPage]); //total points
+      currentPage++;
+    }
+
+  }
+
+}
+private void show() {
+  for(Integer in:al){ //show player's cards
+  System.out.print(suits[in/13]+" "+number[in%13]+"\t"); //show the suits and the number
+}
+System.out.println("Total Points Now："+currentPoint);
+
+}
+private void computer() {
+  Random r = new Random();
+  computerPoint = Math.abs(r.nextInt())%10+16;
+  System.out.println("\nComputer's Results:"+computerPoint);
+}
+
+private void result() {
+  if(currentPoint>21){
+    System.out.println("You lose！");
+  }else if(currentPoint==computerPoint){
+    System.out.println("Draw!");
+  }else if(computerPoint>21){
+    System.out.println("You win！");
+
+  }else if(currentPoint>computerPoint){
+    System.out.println("You win！");
+  }else{
+    System.out.println("You lose！");
+  }
+
+}
+public static void main(String[] args){
+  new Blackjack();
+}
+}
